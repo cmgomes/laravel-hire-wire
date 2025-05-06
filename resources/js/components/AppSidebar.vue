@@ -10,7 +10,7 @@ import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Painel Principal',
+        title: 'Home',
         href: '/dashboard',
         icon: LayoutGrid,
     },
@@ -29,7 +29,7 @@ const mainNavItems: NavItem[] = [
 const footerNavItems: NavItem[] = [
     {
         title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
+        href: 'https://github.com/cmgomes/laravel-hire-wire',
         icon: Folder,
     },
     {
