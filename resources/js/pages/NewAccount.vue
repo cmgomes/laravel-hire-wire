@@ -13,12 +13,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { LoaderCircle, Search } from 'lucide-vue-next';
-import { ref, onMounted, computed } from 'vue';
+import { LoaderCircle } from 'lucide-vue-next';
+import { ref, onMounted } from 'vue';
 
-const page = usePage();
-const flash = computed(() => page.props.flash);
-const showSuccessMessage = ref(false);
+const authToken = localStorage.getItem('authToken');
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Crie sua nova conta',
@@ -26,9 +24,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 const selectedAccountTypeId = ref<number | null>(null);
-const selectedAccountType = ref<AccountTypeOption | null>(null);
 const accountTypes = ref<AccountTypeOption[]>([]);
-const open = ref(false); // Estado para controlar a abertura do Combobox
 
 interface AccountTypeOption {
     id: number;
@@ -46,7 +42,12 @@ const handleAccountTypeChange = (value: string) => {
     form.account_type_id = value;
 };
 const submit = () => {
-    form.post(route('api.new-account.store'), {
+    form.post(route('api.new-account.store', {
+        headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Accept': 'application/json',
+        },
+    }), {
         onSuccess: (response) => {
             alert(response.message || 'Sua conta foi criada com sucesso!');
             router.reload();
@@ -61,7 +62,12 @@ const submit = () => {
 onMounted(async () => {
     let response = null;
     try {
-        response = await fetch('/api/account-types');
+        response = await fetch('/api/account-types', {
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Accept': 'application/json',
+            },
+        });
         if (response.ok) {
             accountTypes.value = await response.json();
         } else {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, router } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +14,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { LoaderCircle } from 'lucide-vue-next';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -30,6 +30,7 @@ interface AccountOption {
 
 const accounts = ref<AccountOption[]>([]);
 const selectedAccountId = ref<number | null>(null);
+const authToken = localStorage.getItem('authToken');
 
 const form = useForm({
     account_id: '',
@@ -39,6 +40,7 @@ const form = useForm({
 const submit = () => {
     form.post(route('api.deposit'), {
         headers: {
+            'Authorization': `Bearer ${authToken}`,
             'Accept': 'application/json',
         },
         onSuccess: (response) => {
@@ -54,7 +56,12 @@ const submit = () => {
 
 onMounted(async () => {
     try {
-        const response = await fetch('/api/user/accounts');
+        const response = await fetch('/api/user/accounts', {
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Accept': 'application/json',
+            },
+        });
         if (response.ok) {
             accounts.value = await response.json();
         } else {
@@ -104,7 +111,7 @@ const filterAmountInput = (event: Event) => {
                                 <Label for="amount">Valor do Depósito</Label>
                                 <Input
                                     id="amount"
-                                    type="text" 
+                                    type="text"
                                     required
                                     placeholder="0,00"
                                     @input="filterAmountInput"
