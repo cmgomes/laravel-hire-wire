@@ -3,16 +3,13 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm, usePage, router } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
-import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
@@ -48,11 +45,6 @@ const handleAccountTypeChange = (value: string) => {
     selectedAccountTypeId.value = parseInt(value);
     form.account_type_id = value;
 };
-
-// const submit = () => {
-//     form.post(route('api.new-account.store'));
-// };
-
 const submit = () => {
     form.post(route('api.new-account.store'), {
         onSuccess: (response) => {
@@ -66,11 +58,10 @@ const submit = () => {
     });
 };
 
-const successMessage = ref('');
-
 onMounted(async () => {
+    let response = null;
     try {
-        const response = await fetch('/api/account-types');
+        response = await fetch('/api/account-types');
         if (response.ok) {
             accountTypes.value = await response.json();
         } else {
@@ -78,6 +69,7 @@ onMounted(async () => {
         }
     } catch (error) {
         console.error('Erro ao buscar tipos de conta:', error);
+        console.log(response)
     }
 });
 

@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthBase from '@/layouts/AuthLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, router } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
 
 defineProps<{
@@ -21,8 +21,36 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
+    fetch('/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Inertia': false,
+        },
+        body: JSON.stringify({
+            email: form.email,
+            password: form.password,
+            remember: form.remember,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Resposta do fetch:", data);
+        if (data && data.token) {
+            localStorage.setItem('authToken', data.token);
+            form.post(route('login'), {
+                onFinish: () => form.reset('password'),
+            });
+            router.push('/dashboard');
+        } else {
+            console.error("Erro ao receber o token:", data);
+        }
+    })
+    .catch(error => {
+        console.error("Erro na requisição de login:", error);
+    })
+    .finally(() => {
+        form.processing = false;
     });
 };
 </script>

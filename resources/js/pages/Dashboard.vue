@@ -2,9 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/vue3';
-import PlaceholderPattern from '../components/PlaceholderPattern.vue';
-import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
+import { ref, onMounted } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -15,12 +13,16 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const accounts = ref([]);
 const transactions = ref([]);
-const page = usePage();
-const appUrl = computed(() => page.props.appUrl);
+const authToken = localStorage.getItem('authToken');
 
 onMounted(async () => {
     try {
-        const response = await fetch('/api/user/accounts');
+        const response = await fetch('/api/user/accounts', {
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Accept': 'application/json',
+            },
+        });
         if (!response.ok) {
             const message = `Erro ao buscar contas: ${response.status}`;
             throw new Error(message);
@@ -33,7 +35,12 @@ onMounted(async () => {
     }
 
     try {
-        const responseTransaction = await fetch('/api/transactions/last-week');
+        const responseTransaction = await fetch('/api/transactions/last-week', {
+            headers: {
+                'Authorization': `Bearer ${authToken}`,
+                'Accept': 'application/json',
+            },
+        });
         if (!responseTransaction.ok) {
             const message = `Erro ao buscar transações: ${responseTransaction.status}`;
             throw new Error(message);
