@@ -1,11 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\AccountTypeController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:api');
 
 Route::middleware('auth')->group(function () {
     Route::get('api/account-types', [AccountTypeController::class, 'index']);
