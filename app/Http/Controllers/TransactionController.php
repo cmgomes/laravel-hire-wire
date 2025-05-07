@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TransactionRequest;
-use App\Models\Account;
-use App\Models\Transaction;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Redirect;
 use App\Services\TransactionsService;
 use Illuminate\Http\JsonResponse;
